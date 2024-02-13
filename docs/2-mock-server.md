@@ -5,7 +5,7 @@ title: Mock Server
 
 # Mock Server
 
-Pomocí mock serveru lze přijímat nebo odesílat testovací data na API. Informace o mock serveru naleznete po kliknutí na detaily [API reference]().
+Pomocí mock serveru lze přijímat nebo odesílat testovací data na API. Informace o mock serveru naleznete po kliknutí na detaily [API reference](/docs/oas/83330f7496caa-senzory).
 
 ## Veřejný server
 Aktuální URL mock serveru online je :
