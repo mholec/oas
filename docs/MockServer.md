@@ -1,5 +1,5 @@
 ---
-stoplight-id: gs9cfg6cz3d0v
+stoplight-id: 2
 ---
 
 # MockServer

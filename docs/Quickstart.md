@@ -1,5 +1,5 @@
 ---
-stoplight-id: quick-start
+stoplight-id: 1
 title: Quick Start
 id: test
 slug: test2
