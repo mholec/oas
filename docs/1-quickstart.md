@@ -1,6 +1,6 @@
 ---
 stoplight-id: 61t0zip7dhkoi
-title: Quickstart Guide
+title: 1. Quickstart Guide
 ---
 
 # Quickstart Guide
