@@ -1,4 +1,4 @@
-# OAS Specifikace
+# OAS
 
 Na této stránce najdete ukázkovou specifikaci aplikace "Senzory". Používám ji v rámci mých školení, přednášek a je nedílnou součástí mého Průvodce Designem REST API.
 
