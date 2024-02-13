@@ -7,6 +7,6 @@ Na této stránce najdete ukázkovou specifikaci aplikace "Senzory". Používám
 
 ## Specifikace
 
-- [Specifikace v YAML zde v repozitáři](https://github.com/mholec/oas/blob/main/reference/Courses.yaml)
+- [Specifikace v YAML zde v repozitáři](https://github.com/mholec/oas/blob/main/reference/Senzory.yaml)
 - [Vizuální podoba s GitHub Pages](https://mholec.github.io/oas)
 - [Specifikace ve Stoplight](https://miroslavholec.stoplight.io/docs/skoleni-rest/83330f7496caa-senzory)
