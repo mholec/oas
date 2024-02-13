@@ -1,5 +1,6 @@
 ---
 stoplight-id: sd4iwj95jqmvv
+title: Quick Start
 ---
 
 # Quickstart
