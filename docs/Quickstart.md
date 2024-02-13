@@ -1,5 +1,5 @@
 ---
-stoplight-id: sd4iwj95jqmvv
+stoplight-id: sd4iwj95jqmvvq
 title: Quick Start
 id: test
 slug: test2
