@@ -4,3 +4,9 @@ Na této stránce najdete ukázkovou specifikaci aplikace "Senzory". Používám
 
 - [Školení REST API Design](https://www.miroslavholec.cz/skoleni/rest-api-design)
 - [Průvodce Designem REST API](https://www.restapi.cz)
+
+## Specifikace
+
+- [Specifikace v YAML zde v repozitáři](https://github.com/mholec/oas/blob/main/reference/Courses.yaml)
+- [Vizuální podoba s GitHub Pages](https://mholec.github.io/oas)
+- [Specifikace ve Stoplight](https://miroslavholec.stoplight.io/docs/skoleni-rest/83330f7496caa-senzory)
