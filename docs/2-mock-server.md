@@ -20,3 +20,5 @@ Chcete-li spustit mock server lokálně, můžete k tomuto účelu použít nás
 ```shell
 prism mock ./path/to/yaml-file.yaml
 ```
+
+Detailní informace k mockování najdete v [dokumentaci](https://docs.stoplight.io/docs/prism/83dbbd75532cf-http-mocking).
