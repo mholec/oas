@@ -66,10 +66,7 @@ paths:
           in: query
           name: timeInterval
           description: časový interval pro průměrné hodnoty v sekundách
-      description: >-
-        Seznam senzorů s přehledem průměrně naměřených hodnot za zvolený časový
-        úsek. Z průměru jsou vyloučeny hodnoty, které systém neshledal
-        validními.
+      description: 'Seznam senzorů s přehledem průměrně naměřených hodnot za zvolený časový úsek. Z průměru jsou vyloučeny hodnoty, které systém neshledal validními.'
       tags:
         - Senzory
   '/sensors/{id}':
@@ -94,20 +91,11 @@ paths:
         '500':
           $ref: '#/components/responses/500-InternalError'
       operationId: GetSensorById
-      description: >-
-        Detailní informace o senzory. Nezahrnuje podrobnosti ohledně naměřených
-        hodnot.
+      description: Detailní informace o senzory. Nezahrnuje podrobnosti ohledně naměřených hodnot.
       tags:
         - Senzory
-  '/sensors/{id}/values':
-    parameters:
-      - schema:
-          type: string
-          example: S1-HALA-A-PRG
-        name: id
-        in: path
-        required: true
-        description: Identifikátor senzoru
+  /sensor-values:
+    parameters: []
     post:
       summary: Import dat ze senzoru
       operationId: ImportSensorValues
@@ -132,6 +120,8 @@ paths:
       description: Hromadný import hodnot pro zvolený senzor
       tags:
         - Senzory
+      x-stoplight:
+        id: 35vyb68v6jl4e
     get:
       summary: Hodnoty pro senzor
       operationId: GetSensorValues
@@ -169,9 +159,26 @@ paths:
             minimum: 0
           in: query
           name: skip
+        - schema:
+            type: string
+            enum:
+              - s
+              - m
+              - h
+              - d
+            example: s
+          in: query
+          name: scale
+          description: 'Granularita statistik (s, m, h, d)'
+        - schema:
+            type: string
+          in: query
+          name: sensorId
       description: Hodnoty naměřené na daném senzoru
       tags:
         - Senzory
+      x-stoplight:
+        id: 6gp86a8hiyn4n
   '/sensor-values/{valueId}':
     parameters:
       - schema:
@@ -248,24 +255,18 @@ paths:
       operationId: post-auth-token
       responses:
         '200':
-          description: >-
-            V případě úspěšné odpovědi je vrácen autentizační bearer token s
-            identitou uživatele
+          description: V případě úspěšné odpovědi je vrácen autentizační bearer token s identitou uživatele
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Token'
         '400':
-          description: >-
-            Generická chyba. Z důvodu zabezpečení nejsou poskytovány podrobnější
-            informace o příčině chyby.
+          description: Generická chyba. Z důvodu zabezpečení nejsou poskytovány podrobnější informace o příčině chyby.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
-      description: >-
-        Ověření uživatele na základě jména a hesla, vystavení auth tokenu pro
-        komunikaci s REST API
+      description: 'Ověření uživatele na základě jména a hesla, vystavení auth tokenu pro komunikaci s REST API'
       requestBody:
         content:
           application/x-www-form-urlencoded:
@@ -351,22 +352,16 @@ components:
           default: 300
           example: 300
           description: časový interval v sekundách
-      description: >-
-        Struktura popisující seznam senzorů a jejich průměrně naměřené hodnoty
-        za časový interval
+      description: Struktura popisující seznam senzorů a jejich průměrně naměřené hodnoty za časový interval
     Sensor:
       title: Sensor
       type: object
-      description: >-
-        Detailní informace o senzoru. Senzory jsou nyní v provozu v 5
-        variantách. Jejich označení je uvedeno vlastností type.
+      description: Detailní informace o senzoru. Senzory jsou nyní v provozu v 5 variantách. Jejich označení je uvedeno vlastností type.
       properties:
         sensorId:
           type: string
           example: S1-HALA-A-PRG
-          description: >-
-            Unikátní identifikátor senzoru. První dva znaky odlišují typ
-            senzoru.
+          description: Unikátní identifikátor senzoru. První dva znaky odlišují typ senzoru.
         name:
           type: string
           example: S1-HALA-A-PRG
@@ -458,9 +453,7 @@ components:
     Alert:
       title: Alert
       type: object
-      description: >-
-        Upozornění na vybočení měření mimo prahové hodnoty po definovanou dobu.
-        Prahové hodnoty spadají do intervalu.
+      description: Upozornění na vybočení měření mimo prahové hodnoty po definovanou dobu. Prahové hodnoty spadají do intervalu.
       properties:
         sensorId:
           type: string
@@ -544,9 +537,7 @@ components:
       examples:
         - username: username
           password: pAssw0rd
-      description: >-
-        Uživatelské údaje, které jsou sdělené při instalaci prvního senzoru v
-        továrně.
+      description: 'Uživatelské údaje, které jsou sdělené při instalaci prvního senzoru v továrně.'
     Token:
       title: Token
       type: object
