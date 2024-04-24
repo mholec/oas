@@ -5,7 +5,16 @@ title: 3. Konvence
 
 # Konvence
 
-API využívá standardní formátování dat ve formátu JSON s **camelCase** syntaxí. Při práci s časovými údaji se používá jako základní jednotka **sekunda**.
+API dodržuje mimo standardů níže uvedené konvence.
+
+
+| Vlastnost      | Formátování                     | Příklad                  |
+| -------------- | ------------------------------- | ------------------------ |
+| JSON struktura | camelCase                       | { "firstName" : "John" } |
+| Datum a čas    | RFC 3339 - YYYY-MM-DDTHH:MM:SSZ | 2024-12-24T12:05:00Z     |
+| Datum          | RFC 3339 - YYYY-MM-DD           | 2024-12-24               |
+| Doba trvání    | RFC 3339 - PTnMnS               | PT20M10S                 |
+
 
 ## Chybové struktury
 Veškeré chyby vychází ze standardu [RFC 9457](https://datatracker.ietf.org/doc/html/rfc9457). Typická podoba chybové struktury je:
