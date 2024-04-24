@@ -11,14 +11,14 @@ info:
     email: mirek@miroslavholec.cz
   license:
     name: Demo
-    url: 'https://www.miroslavholec.cz'
+    url: 'https://www.restapi.cz'
   description: Ukázkové API pro účely školení REST API
 servers:
-  - url: 'https://localhost:5001'
-    description: Localhost
+  - url: 'http://127.0.0.1:4010'
+    description: Local Prism Mock
 tags:
-  - name: Auth
-    description: Autentizační endpointy
+  - name: Metriky
+    description: Správa upozornění vázaných na senzory
     x-tag-expanded: false
   - name: Senzory
     description: Správa senzorů
@@ -38,24 +38,32 @@ paths:
               schema:
                 $ref: '#/components/schemas/Sensors'
               examples:
-                200-Standard:
+                Example 1:
                   value:
-                    data:
+                    items:
                       - sensorId: S1-HALA-A-PRG
                         name: S1-HALA-A-PRG
-                        unit: '%'
+                        unit: C
                         type: S1
-                        meanValue: 0.89
-                    timeInterval: 300
-                200-S2:
-                  value:
-                    data:
                       - sensorId: S2-HALA-A-PRG
                         name: S2-HALA-A-PRG
                         unit: '%'
                         type: S2
-                        meanValue: 1
-                    timeInterval: 300
+                      - sensorId: S1-HALA-B-PRG
+                        name: S1-HALA-B-PRG
+                        unit: C
+                        type: S1
+                      - sensorId: S2-HALA-B-PRG
+                        name: S2-HALA-B-PRG
+                        unit: '%'
+                        type: S2
+                      - sensorId: S3-HALA-B-PRG
+                        name: S3-HALA-B-PRG
+                        unit: m/s
+                        type: S3
+                    totalItems: 5
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
         '500':
           $ref: '#/components/responses/500-InternalError'
       operationId: GetSensors
@@ -85,6 +93,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Sensor'
+              examples:
+                Example 1:
+                  value:
+                    sensorId: S1-HALA-A-PRG
+                    name: S1-HALA-A-PRG
+                    unit: C
+                    type: S1
         '404':
           $ref: '#/components/responses/404-NotFound'
         '500':
@@ -107,20 +122,52 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Measurings'
+              examples:
+                Example 1:
+                  value:
+                    items:
+                      - valueId: 1
+                        sensorid: S1-HALA-A-PRG
+                        obtained: '2024-04-01T13:00:00'
+                        value: 24.4
+                        status: valid
+                      - valueId: 2
+                        sensorid: S1-HALA-A-PRG
+                        obtained: '2024-04-01T13:05:00'
+                        value: 24.5
+                        status: valid
+                      - valueId: 3
+                        sensorid: S1-HALA-A-PRG
+                        obtained: '2024-04-01T13:10:00'
+                        value: 91.5
+                        status: invalid
+                      - valueId: 4
+                        sensorid: S1-HALA-A-PRG
+                        obtained: '2024-04-01T13:15:00'
+                        value: 24.6
+                        status: valid
+                      - valueId: 5
+                        sensorid: S1-HALA-A-PRG
+                        obtained: '2024-04-01T13:20:00'
+                        value: 24.7
+                        status: valid
+                    totalItems: 2339
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
         '500':
           $ref: '#/components/responses/500-InternalError'
       parameters:
         - schema:
             type: string
             format: date-time
-            example: '24-04-17T17:19:47'
+            example: '2024-04-17T17:19:47'
           in: query
           name: dateFrom
           description: Datum od kdy se zvažují hodnoty
         - schema:
             type: string
             format: date-time
-            example: '24-05-27T17:19:47'
+            example: '2024-05-27T17:19:47'
           in: query
           name: dateTo
           description: Datum do kdy se zvažují hodnoty
@@ -179,7 +226,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Alert'
-              examples: {}
+              examples:
+                Example 1:
+                  value:
+                    sensorId: S1-HALA-A-PRG
+                    valueFrom: 13
+                    valueTo: 20
+                    threshold: PT20M
+                    email: info@xyz.cz
+                    state: 'off'
         '404':
           $ref: '#/components/responses/404-NotFound'
         '500':
@@ -200,8 +255,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Alert'
+              examples:
+                Example 1:
+                  value:
+                    sensorId: S1-HALA-A-PRG
+                    valueFrom: 13
+                    valueTo: 20
+                    threshold: PT20M
+                    email: info@xyz.cz
+                    state: 'on'
         '400':
           $ref: '#/components/responses/400-BadRequest'
+        '404':
+          $ref: '#/components/responses/404-NotFound'
         '500':
           $ref: '#/components/responses/500-InternalError'
       requestBody:
@@ -209,6 +275,14 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/AlertUpdate'
+            examples:
+              Example 1:
+                value:
+                  valueFrom: 13
+                  valueTo: 20
+                  threshold: PT20M
+                  email: info@xyz.cz
+                  state: 'on'
       description: Aktualizace nastavení alertu.
       tags:
         - Upozornění
@@ -217,12 +291,131 @@ paths:
   /metrics:
     get:
       summary: Statistiky pro senzory
-      tags: []
-      responses: {}
+      tags:
+        - Metriky
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Metrics'
+              examples:
+                Example 1:
+                  value:
+                    items:
+                      - sensorId: S1-HALA-A-PRG
+                        dateFrom: '2024-01-01T12:00:00'
+                        dateTo: '2024-01-02T12:05:00'
+                        value: 24.4
+                      - sensorId: S2-HALA-A-PRG
+                        dateFrom: '2024-01-01T12:00:00'
+                        dateTo: '2024-01-02T12:05:00'
+                        value: 0.68
+                      - sensorId: S1-HALA-B-PRG
+                        dateFrom: '2024-01-01T12:00:00'
+                        dateTo: '2024-01-02T12:05:00'
+                        value: 23.1
+                      - sensorId: S2-HALA-B-PRG
+                        dateFrom: '2024-01-01T12:00:00'
+                        dateTo: '2024-01-02T12:05:00'
+                        value: 0.66
+                      - sensorId: S3-HALA-B-PRG
+                        dateFrom: '2024-01-01T12:00:00'
+                        dateTo: '2024-01-02T12:05:00'
+                        value: 1
+                Example 2:
+                  value:
+                    items:
+                      - sensorId: S1-HALA-A-PRG
+                        dateFrom: '2024-04-01T00:00:00'
+                        dateTo: '2024-04-01T23:59:59'
+                        value: 1.1
+                      - sensorId: S1-HALA-A-PRG
+                        dateFrom: '2024-04-02T00:00:00'
+                        dateTo: '2024-04-02T23:59:59'
+                        value: 5
+                      - sensorId: S1-HALA-A-PRG
+                        dateFrom: '2024-04-03T00:00:00'
+                        dateTo: '2024-04-03T23:59:59'
+                        value: 10
+                      - sensorId: S1-HALA-A-PRG
+                        dateFrom: '2024-04-04T00:00:00'
+                        dateTo: '2024-04-04T23:59:59'
+                        value: 11.2
+                      - sensorId: S1-HALA-A-PRG
+                        dateFrom: '2024-04-05T00:00:00'
+                        dateTo: '2024-04-05T23:59:59'
+                        value: 13.4
+                      - sensorId: S1-HALA-A-PRG
+                        dateFrom: '2024-04-06T00:00:00'
+                        dateTo: '2024-04-06T23:59:59'
+                        value: 16.2
+                      - sensorId: S1-HALA-A-PRG
+                        dateFrom: '2024-04-07T00:00:00'
+                        dateTo: '2024-04-07T23:59:59'
+                        value: 19.9
+                      - sensorId: S1-HALA-A-PRG
+                        dateFrom: '2024-04-08T00:00:00'
+                        dateTo: '2024-04-08T23:59:59'
+                        value: 22.3
+                      - sensorId: S1-HALA-A-PRG
+                        dateFrom: '2024-04-09T00:00:00'
+                        dateTo: '2024-04-09T23:59:59'
+                        value: 19.8
+        '400':
+          $ref: '#/components/responses/400-BadRequest'
+        '500':
+          $ref: '#/components/responses/500-InternalError'
       operationId: GetMetrics
       x-stoplight:
         id: 3ufa4ffokxy60
       description: Zobrazení statistik k vybraným senzorům. Poskládá naměřené hodnoty ve zvoleném časovém intervalu do agregací a aktivuje nad hodnotami vybranou funkci.
+      parameters:
+        - schema:
+            type: string
+            example: 'S1-HALA-A-PRG, S2-HALA-A-PRG'
+          in: query
+          name: sensorids
+          description: Čárkou oddělené ID senzorů
+          required: true
+        - schema:
+            type: string
+            example: '2024-04-17T17:19:47'
+          in: query
+          name: datefrom
+          description: Datum od kdy se zvažují naměřené hodnoty
+        - schema:
+            type: string
+            example: '2024-05-17T17:19:47'
+          in: query
+          name: dateto
+          description: Datum do kdy se zvažují naměřené hodnoty
+        - schema:
+            type: string
+            enum:
+              - avg
+              - sum
+              - count
+              - min
+              - max
+            default: avg
+            example: avg
+          in: query
+          name: aggregate
+          description: Agregační funkce nad hodnotami
+        - schema:
+            type: string
+            default: value
+            enum:
+              - value
+              - hour
+              - day
+              - week
+            example: hour
+          in: query
+          name: scale
+          description: Granularita
 components:
   schemas:
     ValidationProblemDetails:
@@ -439,11 +632,9 @@ components:
           example: 0.1
           description: Krajní hodnota "do"
         threshold:
-          type: integer
-          format: int32
-          minimum: 0
-          example: 5
-          description: 'Prahová doba, po kterou je hodnota mimo interval v sekundách'
+          type: string
+          example: PT5M
+          description: 'Prahová doba, po kterou je hodnota mimo interval jako duration dle RFC 3339.'
         email:
           type: string
           format: email
@@ -576,20 +767,12 @@ components:
           description: Vypočtená hodnota pro časový rozsah dle zvolené agregační funkce.
   responses:
     400-BadRequest:
-      description: Chybová odpověď při validaci vstupu
+      description: Chybová odpověď při validaci vstupů. Nejčastější příčinou je nevalidní JSON struktura nebo nevalidní parametry či chybějící parametry v URL query string.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ValidationProblemDetails'
-          examples:
-            example-1:
-              value:
-                type: 'https://datatracker.ietf.org/doc/html/rfc7807'
-                title: Validation Failed
-                status: 400
-                detail: See errors for more details
-                errors:
-                  - {}
+      headers: {}
     404-NotFound:
       description: 'Chybová struktura 404 v situacích, kdy není požadovaný resource nalezen'
       content:
