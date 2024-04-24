@@ -1,7 +1,9 @@
 openapi: 3.1.0
+x-stoplight:
+  id: 83330f7496caa
 info:
   title: Senzory
-  version: '1.0'
+  version: '2.0'
   summary: 'API pro obsluhu senzorů, naměřených hodnot a upozornění...'
   contact:
     name: Miroslav Holec
@@ -58,21 +60,18 @@ paths:
           $ref: '#/components/responses/500-InternalError'
       operationId: GetSensors
       parameters:
-        - schema:
-            type: integer
-            format: int32
-            default: 300
-            example: 300
-          in: query
-          name: timeInterval
-          description: časový interval pro průměrné hodnoty v sekundách
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pagesize'
       description: 'Seznam senzorů s přehledem průměrně naměřených hodnot za zvolený časový úsek. Z průměru jsou vyloučeny hodnoty, které systém neshledal validními.'
       tags:
         - Senzory
+      x-stoplight:
+        id: o1t67s2kpzwhe
   '/sensors/{id}':
     parameters:
       - schema:
           type: string
+          example: S1-HALA-A-PRG
         name: id
         in: path
         required: true
@@ -94,103 +93,63 @@ paths:
       description: Detailní informace o senzory. Nezahrnuje podrobnosti ohledně naměřených hodnot.
       tags:
         - Senzory
-  /sensor-values:
-    parameters: []
-    post:
-      summary: Import dat ze senzoru
-      operationId: ImportSensorValues
-      responses:
-        '202':
-          description: Accepted
-        '400':
-          $ref: '#/components/responses/400-BadRequest'
-        '500':
-          $ref: '#/components/responses/500-InternalError'
-      parameters:
-        - schema:
-            type: string
-          in: header
-          name: x-api-key
-          description: ověření API klíčem
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SensorValueCreate'
-      description: Hromadný import hodnot pro zvolený senzor
-      tags:
-        - Senzory
       x-stoplight:
-        id: 35vyb68v6jl4e
+        id: x5xpug38gd735
+  /measurings:
+    parameters: []
     get:
-      summary: Hodnoty pro senzor
-      operationId: GetSensorValues
+      summary: Hodnoty pro senzory
+      operationId: GetMeasurings
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SensorValues'
+                $ref: '#/components/schemas/Measurings'
         '500':
           $ref: '#/components/responses/500-InternalError'
       parameters:
         - schema:
             type: string
             format: date-time
+            example: '24-04-17T17:19:47'
           in: query
           name: dateFrom
+          description: Datum od kdy se zvažují hodnoty
         - schema:
             type: string
             format: date-time
+            example: '24-05-27T17:19:47'
           in: query
           name: dateTo
-        - schema:
-            type: integer
-            format: int32
-            default: 100
-            minimum: 0
-          in: query
-          name: take
-        - schema:
-            type: integer
-            format: int32
-            default: 0
-            minimum: 0
-          in: query
-          name: skip
+          description: Datum do kdy se zvažují hodnoty
         - schema:
             type: string
-            enum:
-              - s
-              - m
-              - h
-              - d
-            example: s
+            example: 'S1-HALA-A-PRG, S2-HALA-A-PRG'
           in: query
-          name: scale
-          description: 'Granularita statistik (s, m, h, d)'
-        - schema:
-            type: string
-          in: query
-          name: sensorId
-      description: Hodnoty naměřené na daném senzoru
+          name: sensorIds
+          description: ID senzorů
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pagesize'
+      description: Hodnoty naměřené na vybraných senzorech
       tags:
         - Senzory
       x-stoplight:
         id: 6gp86a8hiyn4n
-  '/sensor-values/{valueId}':
+  '/measurings/{id}':
     parameters:
       - schema:
           type: integer
           format: int64
-        name: valueId
+          example: 52656333
+        name: id
         in: path
         required: true
-        description: Identifikátor naměřené hodnoty
+        description: ID naměřené hodnoty
     delete:
       summary: Odstranění naměřené hodnoty
-      operationId: DeleteSensorValue
+      operationId: DeleteMeasuring
       responses:
         '204':
           description: No Content
@@ -201,6 +160,8 @@ paths:
       description: Odstranění jedné naměřené hodnoty k senzoru
       tags:
         - Senzory
+      x-stoplight:
+        id: 9xb9hq6xsru8l
   '/alerts/{id}':
     parameters:
       - schema:
@@ -227,6 +188,8 @@ paths:
       description: Informace k alertu nad senzorem. Alert a senzor spolu sdílí jedno ID.
       tags:
         - Upozornění
+      x-stoplight:
+        id: d6uzgw9g7ssjc
     put:
       summary: Úprava alertu v nastavení senzoru
       operationId: UpdateSensorAlert
@@ -249,55 +212,31 @@ paths:
       description: Aktualizace nastavení alertu.
       tags:
         - Upozornění
-  /auth/token:
-    post:
-      summary: Ověření uživatele
-      operationId: post-auth-token
-      responses:
-        '200':
-          description: V případě úspěšné odpovědi je vrácen autentizační bearer token s identitou uživatele
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Token'
-        '400':
-          description: Generická chyba. Z důvodu zabezpečení nejsou poskytovány podrobnější informace o příčině chyby.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetails'
-      description: 'Ověření uživatele na základě jména a hesla, vystavení auth tokenu pro komunikaci s REST API'
-      requestBody:
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Credentials'
-      tags:
-        - Auth
-  /sensor-types:
+      x-stoplight:
+        id: cahzb3lf25ycc
+  /metrics:
     get:
-      summary: Přehled typů senzorů
-      tags:
-        - Senzory
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SensorTypes'
-      operationId: get-sensor-types
-      description: Vrací seznam typů senzorů a jejich podrobné informace
+      summary: Statistiky pro senzory
+      tags: []
+      responses: {}
+      operationId: GetMetrics
+      x-stoplight:
+        id: 3ufa4ffokxy60
+      description: Zobrazení statistik k vybraným senzorům. Poskládá naměřené hodnoty ve zvoleném časovém intervalu do agregací a aktivuje nad hodnotami vybranou funkci.
 components:
   schemas:
     ValidationProblemDetails:
       title: ValidationProblemDetails
       type: object
-      description: Chybová struktura dle RFC 7807 rozšířená o kolekci validačních chyb
+      description: Chybová struktura dle RFC 9457 rozšířená o kolekci validačních chyb
+      x-stoplight:
+        id: pw03zh4o2w3kf
+      required:
+        - title
       properties:
         type:
           type: string
-          example: 'https://datatracker.ietf.org/doc/html/rfc7807'
+          example: 'https://datatracker.ietf.org/doc/html/rfc9457'
           description: Druh chyby dle RFC (URL)
         title:
           type: string
@@ -315,14 +254,21 @@ components:
           type: array
           description: Pole validačních chyb
           items:
-            type: object
+            $ref: '#/components/schemas/ValidationError'
+            x-stoplight:
+              id: li6dwnx74xjzx
     ProblemDetails:
       title: ProblemDetails
       type: object
+      description: Chybová struktura dle RFC 9457
+      x-stoplight:
+        id: afm8y0z7q5kah
+      required:
+        - title
       properties:
         type:
           type: string
-          example: 'https://datatracker.ietf.org/doc/html/rfc7807'
+          example: 'https://datatracker.ietf.org/doc/html/rfc9457'
           description: Typ chyby dle RFC (URL)
         title:
           type: string
@@ -336,27 +282,42 @@ components:
           type: string
           example: Available on dev env only
           description: Detailní informace k chybě
-      description: Chybová struktura dle RFC 7807
     Sensors:
       title: Sensors
       type: object
+      description: Struktura popisující seznam senzorů a jejich průměrně naměřené hodnoty za časový interval
+      x-stoplight:
+        id: sjxgwb1sbdza4
+      required:
+        - items
+        - totalItems
       properties:
-        data:
+        items:
           type: array
           description: Seznam senzorů
           items:
             $ref: '#/components/schemas/Sensor'
-        timeInterval:
+            x-stoplight:
+              id: z293u7a96xh6v
+        totalItems:
           type: integer
           format: int32
-          default: 300
-          example: 300
-          description: časový interval v sekundách
-      description: Struktura popisující seznam senzorů a jejich průměrně naměřené hodnoty za časový interval
+          default: 10
+          example: 50
+          description: Celkový počet položek dle filtru
+          x-stoplight:
+            id: lwffbxt7gdlw1
     Sensor:
       title: Sensor
       type: object
       description: Detailní informace o senzoru. Senzory jsou nyní v provozu v 5 variantách. Jejich označení je uvedeno vlastností type.
+      x-stoplight:
+        id: az0mnp73kk779
+      required:
+        - sensorId
+        - name
+        - unit
+        - type
       properties:
         sensorId:
           type: string
@@ -380,47 +341,63 @@ components:
             - S3
             - S4
             - S5
-        meanValue:
-          type: number
-          format: double
-          example: 0.89
-          description: Průměrná hodnota z naměřených hodnot za zvolený časový interval.
-    SensorValues:
-      title: SensorValues
+    Measurings:
+      title: Measurings
       type: object
-      description: Datová sada s naměřenými hodnotami pro zvolený senzor
+      description: 'Datová sada s naměřenými hodnotami pro zvolené senzory  '
+      x-stoplight:
+        id: q15lew0i711rd
+      required:
+        - items
+        - totalItems
       properties:
-        data:
+        items:
           type: array
           description: Pole s naměřenými hodnotami
           items:
-            $ref: '#/components/schemas/SensorValue'
-        unit:
-          type: string
-          description: Společná jednotka pro naměřené hodnoty
-          example: '%'
-        items:
+            $ref: '#/components/schemas/Measuring'
+            x-stoplight:
+              id: qi0byhcc3wsqm
+        totalItems:
           type: integer
           format: int32
           minimum: 0
           example: 2339
           description: Celkový počet naměřených hodnot
-        filter:
-          $ref: '#/components/schemas/PageFilter'
-          description: Aktuálně aplikovaný filtr na naměřených hodnotách
-    SensorValue:
-      title: SensorValue
+          x-stoplight:
+            id: b9ycfns5kgr88
+    Measuring:
+      title: Measuring
       type: object
+      description: Hodnota naměřené na určitém senzoru
+      x-stoplight:
+        id: junuiv3k56oup
+      required:
+        - valueId
+        - sensorid
+        - obtained
+        - value
+        - status
       properties:
         valueId:
           type: integer
           format: int64
           example: 1
           description: Unikátní identifikátor naměřené hodnoty v systému
-        date:
+          minimum: 1
+        sensorid:
+          type: string
+          x-stoplight:
+            id: l8nft5v3s7igo
+          example: S1-HALA-A-PRG
+          description: 'Identifikátor senzoru, ke kterému se naměřená hodnota váže'
+        obtained:
           type: string
           format: date-time
           description: Datum a čas naměření hodnoty
+          x-stoplight:
+            id: 2wz9ipkcliugz
+          example: '2024-01-01T12:00:00'
         value:
           type: number
           format: double
@@ -433,31 +410,23 @@ components:
             - valid
             - invalid
           example: valid
-      description: Hodnota naměřené na určitém senzoru
-    SensorValueCreate:
-      title: ValuesBatchItem
-      type: object
-      properties:
-        sensorId:
-          type: string
-          example: S1
-        value:
-          type: number
-          format: double
-          example: 10.3
-      required:
-        - sensorId
-        - value
-      x-stoplight:
-        id: 8y72r4i00ejpy
     Alert:
       title: Alert
       type: object
       description: Upozornění na vybočení měření mimo prahové hodnoty po definovanou dobu. Prahové hodnoty spadají do intervalu.
+      x-stoplight:
+        id: obbuqj4i9l2ph
+      required:
+        - sensorId
+        - valueFrom
+        - valueTo
+        - threshold
+        - email
+        - state
       properties:
         sensorId:
           type: string
-          example: SA
+          example: S1-HALA-A-PRG
           description: Identifikátor senzoru
         valueFrom:
           type: number
@@ -479,136 +448,132 @@ components:
           type: string
           format: email
           description: 'E-mail, na který je zasíláno upozornění'
-        status:
+        state:
           type: string
           enum:
-            - enabled
-            - disabled
-          example: enabled
+            - 'on'
+            - 'off'
+          example: 'on'
           description: Stav alertu
+          x-stoplight:
+            id: bybkdsk2dyway
     AlertUpdate:
       title: AlertUpdate
       type: object
       x-stoplight:
         id: nezelpyunv6wt
-      properties:
-        valueFrom:
-          type: number
-          format: double
-          example: 0.01
-        valueTo:
-          type: number
-          format: double
-          example: 0.1
-        threshold:
-          type: integer
-          format: int32
-          minimum: 0
-          example: 5
-          description: Doba vybočení mimo práh v sekundách
-        email:
-          type: string
-          format: email
-          description: 'E-mail, na který bude zasláno upozornění'
-        isActive:
-          type: string
-          description: Stav aleru
-          enum:
-            - enabled
-            - disabled
-          example: enabled
+      description: Nastavení alertu senzoru
       required:
         - valueFrom
         - valueTo
         - threshold
         - email
-        - isActive
-    Credentials:
-      title: Credentials
-      type: object
+        - state
       properties:
-        username:
+        valueFrom:
+          type: number
+          format: double
+          example: 0.01
+          description: Dolní prahová hodnota
+        valueTo:
+          type: number
+          format: double
+          example: 0.2
+          description: Horní prahová hodnota
+        threshold:
           type: string
-        password:
+          example: PT1H30S
+          description: Doba vybočení mimo práh jako duration dle RFC 3339
+          default: PT5M
+        email:
           type: string
-      required:
-        - username
-        - password
-      examples:
-        - username: username
-          password: pAssw0rd
-      description: 'Uživatelské údaje, které jsou sdělené při instalaci prvního senzoru v továrně.'
-    Token:
-      title: Token
-      type: object
-      description: Autentizační token typu JWT
-      properties:
-        access_token:
+          format: email
+          description: 'E-mail, na který bude zasláno upozornění'
+        state:
           type: string
-          description: JWT bearer token
-        token_type:
-          type: string
-          example: bearer
-          description: Druh tokenu
-        expires_in:
-          type: integer
-          example: 3600
-          description: Platnost access tokenu v sekundách
-        refresh_token:
-          type: string
-          description: Refresh token pro výměnu za nový access token
-    SensorType:
-      title: SensorType
-      type: object
-      properties:
-        id:
-          type: string
-          description: Identifikátor typu senzoru
-          example: S1
-        name:
-          type: string
-          description: Název typu senzoru
-          example: Teplota
-        unit:
-          type: string
-          description: 'Jednotka, ve které jsou měřené hodnoty'
-          example: °C
-        description:
-          type: string
-          description: Popis senzoru
-          example: Senzor měřící teplotu vzduchu
-      description: ''
-    SensorTypes:
-      title: SensorTypes
-      type: object
-      properties:
-        data:
-          type:
-            - string
-            - array
-          items:
-            $ref: '#/components/schemas/SensorType'
-    PageFilter:
-      title: PageFilter
+          description: Stav aleru
+          enum:
+            - 'on'
+            - 'off'
+          x-stoplight:
+            id: yfcy218k5if4n
+    ValidationError:
+      title: ValidationError
       x-stoplight:
-        id: 5mdiv9p7meb43
+        id: wj0taqpajwu8s
       type: object
-      description: Filtr pro stránkování
+      description: Validační chyba v rámci validace HTTP požadavku
+      required:
+        - field
+        - message
       properties:
-        take:
-          type: integer
-          format: int32
-          minimum: 0
-          example: 10
-          default: 10
-          description: Počet vrácených položek
-        skip:
-          type: integer
+        field:
+          type: string
+          x-stoplight:
+            id: hyckfrj7xazu2
+          example: Firstname
+        message:
+          type: string
+          x-stoplight:
+            id: svi85fitmovtj
+          example: Field is required
+    Metrics:
+      title: Stats
+      x-stoplight:
+        id: dhnf9f41mw56q
+      type: object
+      description: Statistické informace pro vybrané senzory
+      required:
+        - items
+      properties:
+        items:
+          type: array
+          x-stoplight:
+            id: 1whoutuqg9z2m
+          items:
+            $ref: '#/components/schemas/Metric'
+            x-stoplight:
+              id: lksfcmwhue6ya
+    Metric:
+      title: Metric
+      x-stoplight:
+        id: 8atw2ekegegk2
+      type: object
+      description: Statistická hodnota naměřená pro daný senzor (agregační funkce nad hodnotama pro daný senzor).
+      required:
+        - sensorId
+        - dateFrom
+        - dateTo
+        - value
+      properties:
+        sensorId:
+          type: string
+          x-stoplight:
+            id: xthnk68pv89i8
+          example: S1-HALA-A-PRG
+          description: ID senzoru
+        dateFrom:
+          type: string
+          x-stoplight:
+            id: xpxjs0bmg0ut1
+          format: date-time
+          description: 'Datum, od kterého se zvažují hodnoty'
+          example: '2024-01-01T12:00:00'
+        dateTo:
+          type: string
+          x-stoplight:
+            id: 1et96zjasppqc
+          format: date-time
+          description: 'Datum, do kterého se zvažují hodnoty'
+          example: '2024-01-02T12:00:00'
+        value:
+          x-stoplight:
+            id: 2c9ldyphcva83
+          type: number
+          format: double
           default: 0
-          example: 0
-          minimum: 0
-          format: int32
-          description: 'Počet položek, které jsou v datasetu přeskočeny'
+          example: 0.64
+          description: Vypočtená hodnota pro časový rozsah dle zvolené agregační funkce.
   responses:
     400-BadRequest:
       description: Chybová odpověď při validaci vstupu
@@ -650,3 +615,27 @@ components:
                 title: Internal Server Error
                 status: 500
                 detail: Available on dev environment
+  parameters:
+    page:
+      name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+        example: 1
+        minimum: -2
+        default: 1
+      description: číslo stránky
+    pagesize:
+      name: pagesize
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 10
+        format: int32
+        example: 10
+        minimum: 1
+        maximum: 500
+      description: Počet záznamů na stránku

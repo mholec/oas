@@ -11,7 +11,7 @@ Pomocí mock serveru lze přijímat nebo odesílat testovací data na API. Infor
 Aktuální URL mock serveru online je :
 
 ```text
-https://stoplight.io/mocks/miroslavholec/oas/-1
+https://stoplight.io/mocks/miroslavholec/oas/45037386
 ```
 
 ## Lokální server
