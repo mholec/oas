@@ -765,6 +765,11 @@ components:
           default: 0
           example: 0.64
           description: Vypočtená hodnota pro časový rozsah dle zvolené agregační funkce.
+      examples:
+        - sensorId: S1-HALA-A-PRG
+          dateFrom: '2024-01-01T12:00:00'
+          dateTo: '2024-01-02T12:00:00'
+          value: 0.64
   responses:
     400-BadRequest:
       description: Chybová odpověď při validaci vstupů. Nejčastější příčinou je nevalidní JSON struktura nebo nevalidní parametry či chybějící parametry v URL query string.
@@ -772,6 +777,16 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ValidationProblemDetails'
+          examples:
+            ValidationFailed:
+              value:
+                type: 'https://datatracker.ietf.org/doc/html/rfc9457'
+                title: Validation Failed
+                status: 404
+                detail: See errors for more details
+                errors:
+                  - field: Threshold
+                    message: Field is required
       headers: {}
     404-NotFound:
       description: 'Chybová struktura 404 v situacích, kdy není požadovaný resource nalezen'
@@ -780,11 +795,18 @@ components:
           schema:
             $ref: '#/components/schemas/ProblemDetails'
           examples:
-            example-1:
+            PathNotFound:
               value:
-                type: 'https://datatracker.ietf.org/doc/html/rfc7807'
-                title: Object Not Found
-                status: 400
+                type: 'https://datatracker.ietf.org/doc/html/rfc9457'
+                title: Resource Not Found
+                status: 404
+                detail: Requested path has not been found on the server!
+            ResourceByIdNotFound:
+              value:
+                type: 'https://datatracker.ietf.org/doc/html/rfc9457'
+                title: Resource Not Found
+                status: 404
+                detail: Sensor S1-HALA-C-PRG not found!
     500-InternalError:
       description: Chybová struktura 500
       content:
@@ -792,12 +814,12 @@ components:
           schema:
             $ref: '#/components/schemas/ProblemDetails'
           examples:
-            example-1:
+            Default:
               value:
-                type: 'https://datatracker.ietf.org/doc/html/rfc7807'
+                type: 'https://datatracker.ietf.org/doc/html/rfc9457'
                 title: Internal Server Error
                 status: 500
-                detail: Available on dev environment
+                detail: Available on dev env only
   parameters:
     page:
       name: page
