@@ -29,7 +29,7 @@ tags:
 paths:
   /sensors:
     get:
-      summary: Seznam senzorů s filtrováním
+      summary: Seznam senzorů
       responses:
         '200':
           description: OK
@@ -85,7 +85,7 @@ paths:
         required: true
         description: Identifikátor senzoru
     get:
-      summary: Detaily senzoru
+      summary: Detail senzoru
       responses:
         '200':
           description: OK
@@ -113,7 +113,7 @@ paths:
   /measurings:
     parameters: []
     get:
-      summary: Hodnoty pro senzory
+      summary: Naměřené hodnoty
       operationId: GetMeasurings
       responses:
         '200':
@@ -195,7 +195,7 @@ paths:
         required: true
         description: ID naměřené hodnoty
     delete:
-      summary: Odstranění naměřené hodnoty
+      summary: Odstranění měření
       operationId: DeleteMeasuring
       responses:
         '204':
@@ -218,7 +218,7 @@ paths:
         required: true
         description: Identifikátor alertu shodný s identifikátorem senzoru
     get:
-      summary: Zobrazení alertu nad senzorem
+      summary: Detail alertu
       responses:
         '200':
           description: OK
@@ -246,7 +246,7 @@ paths:
       x-stoplight:
         id: d6uzgw9g7ssjc
     put:
-      summary: Úprava alertu v nastavení senzoru
+      summary: Úprava alertu
       operationId: UpdateSensorAlert
       responses:
         '200':
@@ -283,14 +283,14 @@ paths:
                   threshold: PT20M
                   email: info@xyz.cz
                   state: 'on'
-      description: Aktualizace nastavení alertu.
+      description: Aktualizace (replace) nastavení alertu.
       tags:
         - Upozornění
       x-stoplight:
         id: cahzb3lf25ycc
   /metrics:
     get:
-      summary: Statistiky pro senzory
+      summary: Statistika pro senzory
       tags:
         - Metriky
       responses:
