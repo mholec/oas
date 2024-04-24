@@ -38,12 +38,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Sensors'
               examples:
-                Example 1:
+                DashboardList:
                   value:
                     items:
                       - sensorId: S1-HALA-A-PRG
                         name: S1-HALA-A-PRG
-                        unit: C
+                        unit: °C
                         type: S1
                       - sensorId: S2-HALA-A-PRG
                         name: S2-HALA-A-PRG
@@ -51,7 +51,7 @@ paths:
                         type: S2
                       - sensorId: S1-HALA-B-PRG
                         name: S1-HALA-B-PRG
-                        unit: C
+                        unit: °C
                         type: S1
                       - sensorId: S2-HALA-B-PRG
                         name: S2-HALA-B-PRG
@@ -94,11 +94,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/Sensor'
               examples:
-                Example 1:
+                Detail:
                   value:
                     sensorId: S1-HALA-A-PRG
                     name: S1-HALA-A-PRG
-                    unit: C
+                    unit: °C
                     type: S1
         '404':
           $ref: '#/components/responses/404-NotFound'
@@ -123,7 +123,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Measurings'
               examples:
-                Example 1:
+                Paging:
                   value:
                     items:
                       - valueId: 1
@@ -227,7 +227,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Alert'
               examples:
-                Example 1:
+                Default:
                   value:
                     sensorId: S1-HALA-A-PRG
                     valueFrom: 13
@@ -256,7 +256,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Alert'
               examples:
-                Example 1:
+                EnableAlert:
                   value:
                     sensorId: S1-HALA-A-PRG
                     valueFrom: 13
@@ -301,7 +301,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Metrics'
               examples:
-                Example 1:
+                Dashboard:
                   value:
                     items:
                       - sensorId: S1-HALA-A-PRG
@@ -324,7 +324,7 @@ paths:
                         dateFrom: '2024-01-01T12:00:00'
                         dateTo: '2024-01-02T12:05:00'
                         value: 1
-                Example 2:
+                SensorGraphDetail:
                   value:
                     items:
                       - sensorId: S1-HALA-A-PRG
