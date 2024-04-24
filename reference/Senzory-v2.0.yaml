@@ -305,24 +305,24 @@ paths:
                   value:
                     items:
                       - sensorId: S1-HALA-A-PRG
-                        dateFrom: '2024-01-01T12:00:00'
-                        dateTo: '2024-01-02T12:05:00'
+                        dateFrom: '2024-01-01T09:36:00'
+                        dateTo: '2024-01-02T09:41:00'
                         value: 24.4
                       - sensorId: S2-HALA-A-PRG
-                        dateFrom: '2024-01-01T12:00:00'
-                        dateTo: '2024-01-02T12:05:00'
+                        dateFrom: '2024-01-01T09:36:00'
+                        dateTo: '2024-01-02T09:41:00'
                         value: 0.68
                       - sensorId: S1-HALA-B-PRG
-                        dateFrom: '2024-01-01T12:00:00'
-                        dateTo: '2024-01-02T12:05:00'
+                        dateFrom: '2024-01-01T09:36:00'
+                        dateTo: '2024-01-02T09:41:00'
                         value: 23.1
                       - sensorId: S2-HALA-B-PRG
-                        dateFrom: '2024-01-01T12:00:00'
-                        dateTo: '2024-01-02T12:05:00'
+                        dateFrom: '2024-01-01T09:36:00'
+                        dateTo: '2024-01-02T09:41:00'
                         value: 0.66
                       - sensorId: S3-HALA-B-PRG
-                        dateFrom: '2024-01-01T12:00:00'
-                        dateTo: '2024-01-02T12:05:00'
+                        dateFrom: '2024-01-01T09:36:00'
+                        dateTo: '2024-01-02T09:41:00'
                         value: 1
                 SensorGraphDetail:
                   value:
